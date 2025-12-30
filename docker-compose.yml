@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  pg_db:
+    image: postgres:16
+    container_name: pg_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin@123
+      POSTGRES_DB: persona_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - pg_network
+
+  pg_admin:
+    image: dpage/pgadmin4:latest
+    container_name: pg_admin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin@123
+    ports:
+      - "5050:80"
+    depends_on:
+      - pg_db
+    networks:
+      - pg_network
+
+volumes:
+  pg_data:
+
+networks:
+  pg_network:
+    driver: bridge
