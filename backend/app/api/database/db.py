@@ -18,7 +18,7 @@ engine = create_engine(
     max_overflow=10,
     pool_recycle=3600,
     pool_pre_ping=True,
-    echo=True,
+    echo=False,
 )
 
 SessionLocal = sessionmaker(
@@ -42,7 +42,8 @@ def get_db():
     """This Function provides a database session
             It ensures the session is properly closed after the request.
     """
-    # init_db()
+    init_db()
+    # drop_all_tables()
     db = SessionLocal()
     try:
         yield db

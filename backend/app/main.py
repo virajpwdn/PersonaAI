@@ -4,6 +4,9 @@ from api.routes import auth
 app = FastAPI()
 app.include_router(auth.router)
 
+# @app.on_event("startup")
+# def startup():
+#     init_db()
 
 @app.get("/health")
 def health():
