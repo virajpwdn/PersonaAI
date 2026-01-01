@@ -4,6 +4,7 @@ from langchain_openai import OpenAI
 import os
 from dotenv import load_dotenv
 from langgraph.checkpoint.postgres import PostgresSaver
+from api.agents.agent import Agents
 
 load_dotenv()
 
@@ -11,8 +12,14 @@ DB_URI=os.getenv("DATABASE_URL")
 
 # Defining state
 class AgentState(TypedDict):
-    message: list
-    llm_response: str
+    user_query: str
+    is_question_relevant: bool | None
+    enhanced_prompt: str | None
+    memory: str | None
+    memory_check: bool | None
+    memory_update_check: bool | None
+    memory_question: str | None
+    final_response: str | None
     
 # Initialize checkpointer
 # checkpointer = PostgresSaver.from_conn_string(DB_URI)
@@ -24,16 +31,20 @@ checkpointer.setup()
 # Create Graph
 workflow = StateGraph(AgentState)
 
-#!TODO Defining nodes -> later import them from agents directory
-def hello(state: AgentState) -> AgentState:
-    """Dummy Node"""
-    openai = "Open Ai says hello world"
-    state["llm_response"] = openai
-    return state
+def router_based_on_relavance(state: AgentState) -> str:
+    if state["is_question_relevant"]:
+        return "enhancer"
+    else:
+        return END
 
-workflow.add_node("hello", hello)
+workflow.add_node("is_question_relevant", Agents.relevency_agent)
+workflow.add_node("enhancer", Agents.enhancer_agent)
 
-workflow.add_edge(START, "hello")
-workflow.add_edge("hello", END)
+workflow.add_edge(START, "is_question_relevant")
+workflow.add_conditional_edges("is_question_relevant", router_based_on_relavance, {
+    "enhancer": "enhancer",
+    END: END
+})
+workflow.add_edge("enhancer", END)
 
 graph = workflow.compile(checkpointer=checkpointer)

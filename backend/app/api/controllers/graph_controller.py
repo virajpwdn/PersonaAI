@@ -15,12 +15,13 @@ def personna_user_message(db: Session, message_input: MessageInput, connection_i
     
     initial_state = {
         "user_query": message_input.message,
-        "is_question_relevant": Optional[bool],
-        "enhanced_prompt": Optional[str],
-        "memory": Optional[str],
-        "memory_check": Optional[bool],
-        "memory_update_check": Optional[bool],
-        "final_response": Optional[str]
+        "is_question_relevant": None,
+        "enhanced_prompt": None,
+        "memory": None,
+        "memory_check": None,
+        "memory_update_check": None,
+        "memory_question": None,
+        "final_response": None
     }
     
     config = {"configurable": {"thread_id": connection_id}}
@@ -32,7 +33,7 @@ def personna_user_message(db: Session, message_input: MessageInput, connection_i
     conversation = Chat(
         connection_id = connection_id,
         role = "ai",
-        content = final_state["llm_response"],
+        content = final_state["final_response"],
         user_id = message_input.user_id
     )
     
@@ -41,7 +42,7 @@ def personna_user_message(db: Session, message_input: MessageInput, connection_i
     db.refresh(conversation)
     
     return MessageResponse(
-        response=final_state["llm_response"]
+        response=final_state["final_response"]
     )
     
     # return {"data": "success"}
