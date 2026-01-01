@@ -39,3 +39,4 @@ class UserCRUD:
         db.commit()
         db.refresh(creds)
         return db_user
+    
