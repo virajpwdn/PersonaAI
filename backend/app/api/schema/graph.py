@@ -14,8 +14,10 @@ class MessageResponse(BaseModel):
     # thread_id: str
     # connection_id: UUID
     # user_id: UUID
-    response: str
+    response: str = ""
+    enhanched: str = ""
+    memory: str = ""
     checkpoint_id: Optional[str] = None
-    
+        
 class ConnectResponse(BaseModel):
     id: UUID

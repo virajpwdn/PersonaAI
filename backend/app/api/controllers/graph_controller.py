@@ -15,14 +15,14 @@ def personna_user_message(db: Session, message_input: MessageInput, connection_i
     
     initial_state = {
         "user_query": message_input.message,
-        "is_question_relevant": None,
-        "enhanced_prompt": None,
-        "memory": None,
-        "memory_check": None,
-        "memory_update_check": None,
-        "memory_question": None,
-        "final_response": None,
-        "error": None
+        "is_question_relevant": "",
+        "enhanced_prompt": "",
+        "memory": "",
+        "memory_check": "",
+        "memory_update_check": "",
+        "memory_question": "",
+        "final_response": "",
+        "error": ""
     }
     
     config = {"configurable": {"thread_id": connection_id}}
@@ -41,9 +41,11 @@ def personna_user_message(db: Session, message_input: MessageInput, connection_i
     db.add(conversation)
     db.commit()
     db.refresh(conversation)
-    
+    print("STATE -> ", final_state)
     return MessageResponse(
-        response=final_state["final_response"]
+        response=final_state["final_response"],
+        enhanched = final_state["enhanced_prompt"],
+        memory = final_state["memory"]
     )
     
     # return {"data": "success"}

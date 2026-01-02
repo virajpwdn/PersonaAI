@@ -12,7 +12,6 @@ class Chat(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='CASCADE'))
     role = Column(String, nullable=False)  # "user" | "ai" | "system"
     content = Column(String, nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     created_at = Column(
         DateTime(timezone=True),
