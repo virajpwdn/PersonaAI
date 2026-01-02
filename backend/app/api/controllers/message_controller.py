@@ -8,7 +8,7 @@ from fastapi import HTTPException
 logger = logging.getLogger(__name__)
 
 class MessageController:
-    def create_persona(self, persona_name: str, user_id: UUID, db: Session):
+    def create_persona(persona_name: str, user_id: UUID, db: Session):
         """
         To retive or create persona id
         """

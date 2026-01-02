@@ -20,4 +20,5 @@ class MessageResponse(BaseModel):
     checkpoint_id: Optional[str] = None
         
 class ConnectResponse(BaseModel):
+    data: str
     id: UUID
