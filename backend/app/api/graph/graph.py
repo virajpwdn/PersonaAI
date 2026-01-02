@@ -38,14 +38,26 @@ def router_based_on_relavance(state: AgentState) -> str:
     else:
         return END
 
+def router_based_on_memory(state: AgentState) -> str:
+    if state["memory_check"]:
+        return "memory_update"
+    else: return "retrive_memory"
+
+
 workflow.add_node("is_question_relevant", Agents.relevency_agent)
 workflow.add_node("enhancer", Agents.enhancer_agent)
+workflow.add_node("retrive_memory", Agents.add_memory_agent)
+workflow.add_node("memory_update", Agents.update_memory_agent)
+workflow.add_node("process_agent", Agents.process_agent)
 
 workflow.add_edge(START, "is_question_relevant")
 workflow.add_conditional_edges("is_question_relevant", router_based_on_relavance, {
     "enhancer": "enhancer",
     END: END
 })
-workflow.add_edge("enhancer", END)
+workflow.add_edge("enhancer", "retrive_memory")
+workflow.add_edge("retrive_memory", "process_agent")
+workflow.add_edge("process_agent", END)
+
 
 graph = workflow.compile(checkpointer=checkpointer)
