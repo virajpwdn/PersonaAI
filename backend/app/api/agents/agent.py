@@ -4,9 +4,12 @@ from typing import TypedDict
 from mem0 import MemoryClient
 import logging
 import json
+import os
+
+mem0 = os.getenv("MEM0_API_KEY")
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
-client = MemoryClient(api_key="your-api-key")
+client = MemoryClient(api_key=mem0)
 logger = logging.getLogger(__name__)
 
 class AgentState(TypedDict):
@@ -43,8 +46,12 @@ class Agents:
             print("CONTENT", answer)
             
             state["is_question_relevant"] = answer == "yes"
-            state["enhanced_prompt"] = "Update the prompt"
-        
+            if state["is_question_relevant"]:
+                state["enhanced_prompt"] = state["user_query"]
+            else:
+                state["enhanced_prompt"] = state["user_query"]
+                state["final_response"] = "I'm sorry, I can only answer questions related to business, finance, investment, or money."
+                state["memory"] = ""
         except Exception as e:
             logging.exception("Relevency agent faild")
             
@@ -87,14 +94,126 @@ class Agents:
             # parsing into JSON
             parsed = json.loads(answer)
             
-            state["enhanced_prompt"] = parsed.corrected_query
-            state["memory_question"] = parsed.generated_question
+            state["enhanced_prompt"] = parsed["corrected_query"]
+            state["memory_question"] = parsed["generated_question"]
         except Exception as e:
-            logging.exception("Enhancer agent faild")
+            logging.exception("Enhancer agent failed")
             
             state["error"] = "Unable to determine the response at the moment"
         
         return state
     
-
+    def add_memory_agent(state: AgentState, config):
+        try:
+            if state["memory_check"]:
+                return state
+            
+            connection_id = config["configurable"]["thread_id"]
+            
+            retrival = client.search(state["memory_question"], filter={"user_id": connection_id})
+            print("THIS IS RETRIVAL -> ", retrival)
+            
+            if retrival and len(retrival) > 0:
+                state["memory"] = retrival[0].memory
+                state["memory_check"] = True
+            else:
+                client.add(state["enhanced_prompt"], user_id=connection_id)
+                state["memory_update_check"] = True
+        except Exception as e:
+            logger.exception("Add Memory Agent failed")
+            state["error"] = "Unable to determine the response at the moment"
         
+        return state
+    
+    def update_memory_agent(state: AgentState, config):
+        try:
+            if not state["enhanced_prompt"]:
+                raise ValueError("Prompt is missing")
+            
+            connection_id = config["configurable"]["thread_id"]
+            
+            client.add(state['enhanced_prompt'], user_id = connection_id)
+            state['memory_update_check'] = True
+        except Exception as e:
+            logger.exception("Update to memory agent failed")
+            state["error"] = "Unable to po the response at the moment" 
+            
+        return state
+    
+    def process_agent(state: AgentState):
+        try:
+            SYSTEM_PROMPT = """
+                You are “Buffett-inspired Business & Money Mentor” — a calm, plainspoken, rational advisor focused on long-term business thinking, capital allocation, and personal money management. Base guidance on widely known Warren Buffett principles from Berkshire Hathaway shareholder letters and annual meeting Q&A style; prioritize simplicity, incentives, and temperament. Never claim to be the real Warren Buffett.
+
+                VOICE
+                    Plain English, short paragraphs, minimal jargon.
+                    Patient, humble, a bit witty (lightly), but never snarky.
+                    Prefer principles + checklists over predictions.
+
+                SCOPE (WHAT YOU DO)
+
+                    Teach business fundamentals: durable competitive advantage (“moat”), management quality, incentives, unit economics, balance-sheet strength, and long-term compounding mindset.
+                    Teach personal finance: budgeting, saving rate, emergency fund logic, avoiding high-interest debt, and building a long-term plan.
+                    Teach “how to research”: what documents to read, what questions to ask, what numbers to compute, how to avoid common mistakes.
+
+                HARD RULES (WHAT YOU NEVER DO)
+
+                    No personalized financial advice, no “buy/sell/hold” on any stock/crypto, no price targets, no timing the market.
+                    If asked for stock picks or specific tickers: refuse briefly and pivot to a research framework.
+                    If user asks for illegal/unethical actions: refuse.
+
+                RESPONSE FORMAT (DEFAULT)
+
+                    One-sentence principle-first answer.
+                    3–6 bullet research steps or a checklist.
+                    2–4 risks/pitfalls (“What could go wrong”).
+                    One clarifying question to tailor the framework (not a recommendation).
+
+                EXAMPLES
+
+                User: “Should I buy shares of XYZ?”
+                Assistant: “Can’t help with buy/sell decisions, but can help you decide how to think.”
+
+                    Circle of competence: Can you explain XYZ’s business model simply?
+
+                    Moat: What prevents competitors from copying it?
+
+                    Management: Are incentives aligned with owners?
+
+                    Financials: 5–10 year history of ROIC, debt, free cash flow.
+
+                    Valuation: Compare conservative intrinsic value range vs. current price (with margin of safety).
+                    Pitfalls: Story-driven investing, leverage, ignoring opportunity cost.
+                    Question: “What does XYZ sell, and who is its strongest competitor?”
+
+                User: “How do I manage money better each month?”
+                Assistant: “Build a system that makes good behavior automatic.”
+
+                    Track spending for 30 days; find the top 3 leaks.
+
+                    Set a target saving rate; automate it on payday.
+
+                    Build an emergency fund; avoid high-interest debt.
+
+                    Invest with a long time horizon; keep it simple and low-cost.
+                    Pitfalls: Lifestyle creep, chasing hot returns, overconfidence.
+                    Question: “Is your goal stability, aggressive saving, or a specific purchase timeline?”
+
+            """
+            
+            response = llm.invoke(
+                [
+                    SystemMessage(SYSTEM_PROMPT),
+                    HumanMessage(state["enhanced_prompt"])
+                ]
+            )
+            
+            answer = response.content
+            print("FINAL ANSER -> ", answer)
+            state["final_response"] = answer
+            
+        except Exception as e:
+            logger.exception("Update to memory agent failed")
+            state["error"] = "Unable to po the response at the moment" 
+            
+        return state
