@@ -20,6 +20,7 @@ class AgentState(TypedDict):
     memory_update_check: bool | None
     memory_question: str | None
     final_response: str | None
+    error: str | None
     
 # Initialize checkpointer
 # checkpointer = PostgresSaver.from_conn_string(DB_URI)

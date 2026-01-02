@@ -21,7 +21,8 @@ def personna_user_message(db: Session, message_input: MessageInput, connection_i
         "memory_check": None,
         "memory_update_check": None,
         "memory_question": None,
-        "final_response": None
+        "final_response": None,
+        "error": None
     }
     
     config = {"configurable": {"thread_id": connection_id}}
