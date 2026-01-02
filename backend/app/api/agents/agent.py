@@ -7,8 +7,10 @@ import json
 import os
 
 mem0 = os.getenv("MEM0_API_KEY")
+model_1 = os.getenv("OPENAI_MODEL_1")
+model_2 = os.getenv("OPENAI_MODEL_2")
+model_3 = os.getenv("OPENAI_MODEL_3")
 
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 client = MemoryClient(api_key=mem0)
 logger = logging.getLogger(__name__)
 
@@ -29,7 +31,7 @@ class Agents:
         try:
             if not state["user_query"]:
                 raise ValueError("user_query is missing in state")
-            
+            llm = ChatOpenAI(model=model_1, temperature=0)
             prompt = [
                 SystemMessage(
                     content=(
@@ -64,7 +66,7 @@ class Agents:
         try:
             if not state["user_query"]:
                 raise ValueError("user_query is missing in state")
-            
+            llm = ChatOpenAI(model=model_2, temperature=0)
             SYSTEM_PROMPT = """
             You are a copywriter with 50 years of experience. You have been correcting grammar, spelling, and punctuation, and you are a master of the English language. People take lessons from you.
             
@@ -142,6 +144,7 @@ class Agents:
     
     def process_agent(state: AgentState):
         try:
+            llm = ChatOpenAI(model=model_3, temperature=0)
             SYSTEM_PROMPT = """
                 You are “Buffett-inspired Business & Money Mentor” — a calm, plainspoken, rational advisor focused on long-term business thinking, capital allocation, and personal money management. Base guidance on widely known Warren Buffett principles from Berkshire Hathaway shareholder letters and annual meeting Q&A style; prioritize simplicity, incentives, and temperament. Never claim to be the real Warren Buffett.
 
