@@ -1,50 +1,94 @@
-import React from "react";
+"use client";
+import React, { useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
 export default function AdventureStatCard({
   leftLabel = "Safari",
   pillLabel = "Adventure Travel",
   value = "35%",
   title = "Warren Buffet",
-  description = "Warren Buffett is the legendary “Oracle of Omaha” and the mind behind Berkshire Hathaway—famous for calm, long-term business thinking and disciplined money habits. Chat with a Buffett-inspired mentor for clear, no-hype guidance on investing principles, research mindset, and smarter financial decisions",
+  description = "Warren Buffett is the legendary 'Oracle of Omaha' and the mind behind Berkshire Hathaway—famous for calm, long-term business thinking and disciplined money habits. Chat with a Buffett-inspired mentor for clear, no-hype guidance on investing principles, research mindset, and smarter financial decisions",
   activeIndex = 1,
   totalDots = 5,
   image = "/warren.png",
 }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // useGSAP(() => {
+  //   gsap.from(".card-container", {
+  //     scale: 0,
+  //     opacity: 0,
+  //     duration: 0.6,
+  //     ease: "back.out",
+  //   });
+  // });
+
+  const handleMouseEnter = () => {
+    gsap.to(cardRef.current, {
+      backgroundImage:
+        "radial-gradient(1200px circle at 85% 85%, rgba(123, 44, 255, 0.95) 0%, rgba(123, 44, 255, 0.55) 30%, rgba(16, 16, 16, 0) 60%), linear-gradient(135deg, #7a2cff 0%, #ff7a18 55%, #1b1b1b 100%)",
+      duration: 0.8,
+      ease: "power2.inOut",
+    });
+  };
+
+  const handleMouseLeave = () => {
+    gsap.to(cardRef.current, {
+      backgroundImage:
+        "radial-gradient(1200px circle at 15% 15%, rgba(255, 147, 36, 0.95) 0%, rgba(255, 147, 36, 0.55) 30%, rgba(16, 16, 16, 0) 60%), linear-gradient(135deg, #ff7a18 0%, #7a2cff 55%, #1b1b1b 100%)",
+      duration: 0.8,
+      ease: "power2.inOut",
+    });
+  };
+
+  const mouseMoveHandler = (e: React.MouseEvent) => {
+    if (!cardRef.current) return;
+    const { clientX, clientY } = e;
+
+    const rect = cardRef.current?.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const xPercent = (x / rect.width) * 100;
+    const yPercent = (y / rect.height) * 100;
+
+    const clampedX = Math.max(10, Math.min(90, xPercent));
+    const clampedY = Math.max(10, Math.min(90, yPercent));
+
+    gsap.to(cardRef.current, {
+      "--gradient-pos-x": `${clampedX}%`,
+      "--gradient-pos-y": `${clampedY}%`,
+      ease: "power1.out",
+      overwrite: "auto",
+    });
+  };
+
   return (
     <div
-      className={[
-        "relative w-[340px] overflow-hidden",
-        "rounded-[28px] p-5 text-white",
-        "shadow-[0_18px_50px_rgba(0,0,0,0.35)]",
-        //gradient background
-        "bg-[radial-gradient(1200px_circle_at_15%_15%,rgba(255,147,36,0.95)_0%,rgba(255,147,36,0.55)_30%,rgba(16,16,16,0)_60%),linear-gradient(135deg,#ff7a18_0%,#7a2cff_55%,#1b1b1b_100%)]",
-      ].join(" ")}
+      ref={cardRef}
+      className="card-container"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onMouseMove={mouseMoveHandler}
     >
-      {/* soft vignette */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(800px_circle_at_30%_0%,rgba(255,255,255,0.08)_0%,rgba(0,0,0,0.55)_65%,rgba(0,0,0,0.75)_100%)]" />
+      {/* Soft vignette */}
+      <div className="vignette-overlay" />
 
       {/* Top row */}
       <div className="relative z-10 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="h-9 w-9 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center">
+          <div className="badge-circle">
             <span className="text-[13px] font-semibold">{leftLabel}</span>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            className="flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm font-medium backdrop-blur-md"
-          >
+          <button type="button" className="glass-button">
             <span className="opacity-95">{pillLabel}</span>
             <span className="text-white/80">▾</span>
           </button>
-
-          <button
-            type="button"
-            aria-label="Open"
-            className="h-10 w-10 rounded-full border border-white/20 bg-white/10 backdrop-blur-md flex items-center justify-center"
-          >
+          <button type="button" aria-label="Open" className="icon-button">
             <span className="text-lg leading-none">↗</span>
           </button>
         </div>
@@ -54,10 +98,8 @@ export default function AdventureStatCard({
       <div className="relative z-10 mt-14">
         <div className="flex items-start gap-2">
           <div className="border-b border-zinc-400 drop-shadow-2xl">
-            {/* {value} */}
-            <img src={image} alt="" className="rounded-md object-cover" />
+            <img src={image} alt="main" className="rounded-md object-cover" />
           </div>
-          {/* <div className="mt-5 text-white/80 text-2xl">↗</div> */}
         </div>
 
         <div className="mt-5">
@@ -65,41 +107,11 @@ export default function AdventureStatCard({
           <div className="mt-3 text-[13px] leading-relaxed text-white/65">
             {description}
           </div>
-          <button
-            type="button"
-            className="
-            bg-[#e0e0e0]
-            rounded-[12px]
-            px-10 py-5
-            text-[18px]
-            cursor-pointer
-            transition-all duration-200 ease-in-out
-            shadow-[8px_8px_16px_#bebebe,-8px_-8px_16px_#ffffff]
-            shadow-[inset_6px_6px_10px_#bebebe,inset_-6px_-6px_10px_#ffffff]
-            text-gray-500
-            "
-          >
+          <button type="button" className="neumorphic-btn mt-4">
             click here
           </button>
         </div>
       </div>
-
-      {/* Bottom indicators */}
-      {/* <div className="absolute left-0 right-0 bottom-4 z-10 flex justify-center gap-2">
-        {Array.from({ length: totalDots }).map((_, i) => {
-          const index = i + 1;
-          const active = index === activeIndex;
-          return (
-            <span
-              key={index}
-              className={[
-                "h-[6px] rounded-full transition-all",
-                active ? "w-12 bg-white/90" : "w-7 bg-white/30",
-              ].join(" ")}
-            />
-          );
-        })}
-      </div> */}
     </div>
   );
 }
