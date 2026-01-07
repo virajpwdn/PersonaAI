@@ -23,15 +23,30 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-  width: 100dvh;
+  height: 100dvh;
   overflow-x: hidden;
 }
 
 html {
   scroll-behavior: smooth;
+  /* height: screen;
+  width: screen; */
+}
+
+#hero-section {
+  @apply relative max-w-5xl mx-auto pt-28 lg:pt-72 md:pt-40 h-dvh text-center px-0;
+
+  h1 {
+    @apply text-3xl sm:text-4xl font-semibold my-5;
+  }
 }
 
 @layer utilities {
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  /*  */
   .card-container {
     @apply relative w-80 overflow-hidden rounded-[28px] p-5 text-white shadow-[0_18px_50px_rgba(0,0,0,0.35)];
     background-image: radial-gradient(

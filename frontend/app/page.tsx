@@ -1,8 +1,11 @@
-import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import {ScrollTrigger} from 'gsap/ScrollTrigger'
+import Hero from "./components/Hero";
 
 gsap.registerPlugin(ScrollTrigger)
 const page = () => {
-  return <div>page</div>;
+  return <div>
+    <Hero />
+  </div>;
 };
 export default page;
