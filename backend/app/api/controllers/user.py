@@ -15,7 +15,7 @@ class UserCRUD:
     """
     def create(self, db: Session, user: UserCreate):
         hash_password = pwd_context.hash(user.password)
-        print("Hashed_Password", hash_password)
+        # print("Hashed_Password", hash_password)
         
         db_user = User(
             username = user.username,
@@ -31,7 +31,7 @@ class UserCRUD:
         
         creds = Credentials(
             email = user.email,
-            password_hash = hash_password,
+            password_hash = user.password,
             authorId = db_user.id
         )
         
