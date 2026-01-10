@@ -3,6 +3,7 @@ import { useRef, useState, useEffect } from "react";
 import { FaArrowAltCircleUp } from "react-icons/fa";
 import { baseUrl } from "@/utils/constants";
 import axios from "axios";
+import MarkdownRenderer from "@/app/components/MarkdownRenderer";
 
 interface Message {
   senderType: string;
@@ -104,7 +105,15 @@ const ChatPage = () => {
                       : "bg-transparent text-black rounded-bl-none min-w-full"
                   }`}
                 >
-                  <p className="break-words">{msg.content}</p>
+                  <p className="break-words">
+                    {msg.senderType === "user" ? (
+                      msg.content
+                    ) : (
+                      <MarkdownRenderer
+                        mdContent={msg.content}
+                      ></MarkdownRenderer>
+                    )}
+                  </p>
                 </div>
               </div>
             ))
