@@ -68,9 +68,10 @@ class RedisClient:
             cls._instance = redis.Redis(
             host=os.getenv("REDIS_HOST", "localhost"),
             port=int(os.getenv("REDIS_PORT", 6379)),
-            db=int(os.getenv("REDIS_DB", 0)),
+            username="default",
+            password=os.getenv("REDIS_DB"),
             decode_responses=True,
-            socket_connection_timeout=5,
+            socket_connect_timeout=5,
             socket_keepalive=True
         )
         
@@ -84,6 +85,7 @@ class RedisClient:
             client = cls.get_client()
             client.ping()
             print("Redis connected successfully")
+
             return client
         except Exception as e:
             print(f"Redis connection failed: {str(e)}")
