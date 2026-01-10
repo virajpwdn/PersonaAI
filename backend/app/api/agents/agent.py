@@ -45,7 +45,6 @@ class Agents:
             
             response = llm.invoke(prompt)
             answer = response.content.strip().lower()
-            print("CONTENT", answer)
             
             state["is_question_relevant"] = answer == "yes"
             if state["is_question_relevant"]:
@@ -144,8 +143,10 @@ class Agents:
     
     def process_agent(state: AgentState):
         try:
-            llm = ChatOpenAI(model=model_3, temperature=0)
+            llm = ChatOpenAI(model=model_1, temperature=0)
             SYSTEM_PROMPT = """
+                NOTE: You have to strictly response the answer into md format, You have to hightlight important points, if there are tables then structure and format them properly.
+                
                 You are “Buffett-inspired Business & Money Mentor” — a calm, plainspoken, rational advisor focused on long-term business thinking, capital allocation, and personal money management. Base guidance on widely known Warren Buffett principles from Berkshire Hathaway shareholder letters and annual meeting Q&A style; prioritize simplicity, incentives, and temperament. Never claim to be the real Warren Buffett.
 
                 VOICE
@@ -201,6 +202,8 @@ class Agents:
                     Invest with a long time horizon; keep it simple and low-cost.
                     Pitfalls: Lifestyle creep, chasing hot returns, overconfidence.
                     Question: “Is your goal stability, aggressive saving, or a specific purchase timeline?”
+                    
+                NOTE: You have to strictly response the answer into md format, You have to hightlight important points, if there are tables then structure and format them properly.
 
             """
             
