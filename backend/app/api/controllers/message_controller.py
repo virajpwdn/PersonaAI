@@ -12,9 +12,9 @@ class MessageController:
     create_persona method checks if the persona already exists in db
     if yes then it returns persona id
     else it creates new persona and saves into table
-    @params persona_name: string
-    @user_id: user id of auth user
-    @db for connection
+    :params persona_name: string
+    :user_id: user id of auth user
+    :db for connection
     '''
     def create_persona(self, persona_name: str, user_id: UUID, db: Session):
         """
