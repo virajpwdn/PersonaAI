@@ -16,7 +16,7 @@ class MessageController:
     @user_id: user id of auth user
     @db for connection
     '''
-    def create_persona(self,persona_name: str, user_id: UUID, db: Session):
+    def create_persona(self, persona_name: str, user_id: UUID, db: Session):
         """
         To retive or create persona id
         """

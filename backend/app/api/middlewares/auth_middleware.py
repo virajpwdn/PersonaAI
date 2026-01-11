@@ -2,38 +2,43 @@ import json
 from fastapi import Request, HTTPException, status
 import jwt
 import os
-from database.db import redis_client, SessionLocal
-from model.user import User
+from api.database.db import redis_client, SessionLocal
+from api.model.user import User
 
 async def verify_and_attach_user(request: Request) -> Request:
     """
     Auth middleware - which decodes jwt token and attch users data and sends forward.
     """
     
-    # 1. Extracting token from auth header
+    # Extracting token from cookies
     
-    auth_header = request.headers.get("Authorization")
+    token = request.cookies.get("access_token")
     
-    if not auth_header:
-        raise HTTPException(
+    if not token:
+        auth_header = request.headers.get("Authorization")
+        
+        if not auth_header:
+            raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Authorization header missing"
         )
-    
-    try:
-        schema, token = auth_header.split()
-        if schema.lower() != "bearer":
-            raise ValueError("Invalid auth schema")
-    except ValueError:
-        raise HTTPException(
+        
+        try:
+            schema, token = auth_header.split()
+            if schema.lower() != "bearer":
+                raise ValueError("Invalid auth schema")
+        except ValueError:
+         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid auth header format. user 'Bearer'."
         )
+    
+    
         
-    # 2. Decoding JWT token
+    # Decoding JWT token
     try:
         payload = jwt.decode(token, os.getenv("SECRET_KEY"), algorithms=[os.getenv("ALGORITHM")])
-        
+        print("PAYLOAD - ", payload)
         user_id = payload.get("sub")
         
         if not user_id:
