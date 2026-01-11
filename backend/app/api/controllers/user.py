@@ -31,7 +31,7 @@ class UserCRUD:
         
         creds = Credentials(
             email = user.email,
-            password_hash = user.password,
+            password_hash = hash_password,
             authorId = db_user.id
         )
         
