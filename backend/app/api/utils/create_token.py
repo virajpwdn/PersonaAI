@@ -12,12 +12,14 @@ def create_access_token(user_id: str, expires_delta: timedelta = None):
     returns token string
     """
     if not user_id:
-        ValueError("user id is missing")
+       raise ValueError("user id is missing")
     
-    expire = datetime.now(timezone.utc) + expires_delta
-    
+    if expires_delta is None:
+        expires_delta = timedelta(minutes=15)  # or hours=1
+
+    expire = datetime.now(timezone.utc) + expires_delta    
     payload = {
-        "sub": user_id,
+        "sub": str(user_id),
         "iat":  datetime.now(timezone.utc),
         "exp":  expire,
     }
@@ -34,4 +36,3 @@ def create_access_token(user_id: str, expires_delta: timedelta = None):
 #     payload = jwt.decode(token, os.getenv("SECRET_KEY"), algorithm=[os.getenv("ALGORITHM")])
 #     user_id = payload.user_id
 #     return user_id
-    
