@@ -4,20 +4,23 @@ import {
   FaArrowCircleRight,
   FaArrowCircleUp,
 } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 interface CardProps {
   name: string;
   src: string;
   description: string;
   imgAlt: string;
+  link: string;
 }
 
 const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ name, src, description, imgAlt }, ref) => {
+  ({ name, src, description, imgAlt, link }, ref) => {
+    const router = useRouter()
     return (
       <div
         ref={ref}
-        className="max-w-[350px] bg-[#fff] rounded-4xl p-5 opacity-0"
+        className="max-w-[350px] bg-white rounded-4xl p-5 opacity-0 shadow-lg"
       >
         <div className="relative">
           <img src={src} alt={imgAlt} className="rounded-3xl shadow-xl" />
@@ -28,7 +31,9 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         </div>
         {/* chat button */}
         <div className="mt-5 flex justify-between items-center px-4">
-          <button className="bg-sky-500 px-8 font-bold py-3 rounded-xl">
+          <button onClick={() => {
+            router.push(`/persona/${link}`)
+          }} className="bg-sky-500 px-8 font-bold py-3 rounded-xl cursor-pointer">
             Chat
           </button>
           <FaArrowCircleRight size={28} />

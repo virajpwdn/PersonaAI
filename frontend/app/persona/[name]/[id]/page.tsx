@@ -9,7 +9,10 @@ interface Message {
   senderType: string;
   content: string;
 }
-
+// 1. Here first api call to make connection
+// 2. Response you get persona ID
+// 3. Load recent 20 chats from database
+// 4. new message send to backend
 const ChatPage = () => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);

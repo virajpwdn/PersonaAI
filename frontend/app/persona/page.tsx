@@ -2,9 +2,13 @@
 import Card from "../components/Card";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { persona } from "@/utils/constants";
+import { useRouter } from "next/navigation";
+
 gsap.registerPlugin(ScrollTrigger);
+
 const Page = () => {
   const name = "Warren Buffet";
   const description =
@@ -45,10 +49,15 @@ const Page = () => {
     });
   }, []);
 
+  useEffect(() => {
+    // For creating connection
+    
+  }, [])
+
   return (
     <>
-      <section className="h-dvh w-screen mt-30">
-        <div className="container mx-auto">
+      <section className="h-dvh container mx-auto mt-30">
+        <div className="">
           <div className="flex flex-col md:flex-row items-center justify-center gap-5">
             {[0, 1].map((index) => (
               <Card
@@ -65,17 +74,18 @@ const Page = () => {
           </div>
 
           {/* Bottom Cards */}
-          <div className="flex flex-col md:flex-row items-center justify-center gap-5 py-20">
-            {[0, 1].map((idx) => (
+          <div className="grid grid-cols-2 justify-center mx-auto w-fit gap-5 gap-y-20 py-20">
+            {persona.map((item, idx) => (
               <Card
-                key={idx}
+                key={item.uni}
                 ref={(el) => {
                   if (el) nextRef.current[idx] = el;
                 }}
-                name={name}
+                name={item.name}
                 description={description}
                 src={src}
                 imgAlt={imgAlt}
+                link={`${item.uni}/connectionid`}
               />
             ))}
           </div>
