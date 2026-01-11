@@ -51,8 +51,7 @@ const Page = () => {
 
   useEffect(() => {
     // For creating connection
-    
-  }, [])
+  }, []);
 
   return (
     <>

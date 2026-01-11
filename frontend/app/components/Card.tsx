@@ -5,6 +5,7 @@ import {
   FaArrowCircleUp,
 } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface CardProps {
   name: string;
@@ -32,7 +33,8 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         {/* chat button */}
         <div className="mt-5 flex justify-between items-center px-4">
           <button onClick={() => {
-            router.push(`/persona/${link}`)
+            // router.push(`/persona/${link}`)
+            toast.success("success")
           }} className="bg-sky-500 px-8 font-bold py-3 rounded-xl cursor-pointer">
             Chat
           </button>
