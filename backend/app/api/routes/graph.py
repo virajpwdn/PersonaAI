@@ -7,12 +7,13 @@ from api.controllers.message_controller import MessageController
 import uuid
 from api.model.chat import Chat
 from api.model.personna import Persona
+from api.middlewares.auth_middleware import verify_and_attach_user
 
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
 @router.post("/message", response_model=MessageResponse)
-def send_message(message: MessageInput, db: Session = Depends(get_db)):
+def send_message(message: MessageInput, db: Session = Depends(get_db), auth: Session = Depends(verify_and_attach_user)):
     """
     Send a message to the agent.
     The message will be processed by LangGraph and checkpointed to PostgreSQL.
@@ -34,4 +35,5 @@ def send_message(message: MessageInput, db: Session = Depends(get_db)):
 
 @router.get("/persona/connect/{persona_name}", response_model=ConnectResponse)
 def get_pesona(persona_name: str, user_id: uuid.UUID, db: Session = Depends(get_db)):
-    return MessageController.create_persona(persona_name, user_id, db)
+    controller = MessageController()
+    return controller.create_persona(persona_name, user_id, db)
