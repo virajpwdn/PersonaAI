@@ -122,8 +122,8 @@ const Navbar = () => {
     >
       <div className="flex items-center gap-4">
         <img
-          src="/london.jpg"
-          className="h-14 w-14 rounded-full -translate-x-2"
+          src="/logo-1.png"
+          className="h-14 w-14 rounded-full -translate-x-2 object-cover scale-150"
         />
         <h3 className="text-lg font-black uppercase">Persona AI</h3>
       </div>

@@ -72,15 +72,16 @@ const Hero = () => {
       <section id="hero-section">
         {/* Navbar */}
         <p id="text" className="bg-white inline px-3 py-1 rounded-xl opacity-0">
-          Talk to personas and chat with them
+          Your Creative Partner, For Conversations
         </p>
         <h1 id="text" className="opacity-0">
-          Your Creative Partner, For Conversations
+          Chat With the Minds You Admire
         </h1>
         <p id="text" className="max-w-lg mx-auto opacity-0">
-          From dynamic video generation to intelligent chat, our AI-powered
-          suite helps you create compelling content and conversations. <br />
-          Your all-in-one Solution for modern creation
+          Persona AI lets you chat with AI personas inspired by highly
+          successful individuals. Talk through your goals, decisions, and ideas
+          to gain clarity, structure your plans, and move forward with
+          confidence.
         </p>
         {/* Video */}
         <video
@@ -123,7 +124,7 @@ const Hero = () => {
           className="rounded-lg absolute top-[52%] xl:-translate-x-1/2 translate-x-1/2 -translate-y-1/2 lg:top-[55%] transition-all ease-in duration-75 max-md:top-[65%]"
         >
           <img
-            src="/newyork.jpg"
+            src="/elon.jpeg"
             alt="new york"
             className="h-80 w-72 rounded-3xl shadow-lg opacity-0"
             // style={{ clipPath: "polygon(28% 5%, 95% 5%, 72% 95%, 5% 95%)" }}
@@ -140,9 +141,9 @@ const Hero = () => {
           style={{ transform: transformRight }}
         >
           <img
-            src="/london.jpg"
+            src="/warren-bg.png"
             alt="london"
-            className="h-72 w-52 rounded-lg shadow-lg opacity-0"
+            className="h-72 w-52 rounded-lg shadow-lg opacity-0 object-cover"
             // style={{ clipPath: "polygon(0 0, 80% 0, 100% 100%, 12% 100%)" }}
           />
         </div>
